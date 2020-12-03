@@ -12,7 +12,6 @@ RUN apt-get update && \
     apt-get -y install apt-transport-https \
     ca-certificates \
     curl \
-    unzip \
     gnupg2 \
     software-properties-common && \
     curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
@@ -48,7 +47,8 @@ RUN sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/doc
 RUN sudo chmod +x /usr/local/bin/docker-compose
 
 ##Install AWS CLI
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+RUN apt-get install -y unzip && \ 
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     sudo ./aws/install
 #RUN sudo apt-get install -y awscli
