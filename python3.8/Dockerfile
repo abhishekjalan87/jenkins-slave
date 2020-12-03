@@ -19,7 +19,9 @@ RUN apt-get update && \
     stable" && \
     apt-get update && \
     apt-get -y install docker-ce 
-RUN usermod -a -G docker jenkins
+RUN usermod -a -G docker jenkins && \
+    sudo sh -c "echo \"jenkins ALL=(ALL) NOPASSWD: ALL\" >> /etc/sudoers"
+
 
 #Install Python3.8.6
 RUN apt-get install -y openssl make build-essential libssl-dev zlib1g-dev libbz2-dev \
