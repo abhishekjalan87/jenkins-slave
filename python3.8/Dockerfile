@@ -12,6 +12,7 @@ RUN apt-get update && \
     apt-get -y install apt-transport-https \
     ca-certificates \
     curl \
+    unzip \
     gnupg2 \
     software-properties-common && \
     curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
@@ -47,31 +48,9 @@ RUN sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/doc
 RUN sudo chmod +x /usr/local/bin/docker-compose
 
 ##Install AWS CLI
-RUN sudo apt-get install -y awscli 
-
-##Install PG
-RUN apt-get install -y wget ca-certificates build-essential curl && \
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main" > /etc/apt/sources.list.d/PostgreSQL.list'
-RUN apt-get update && \
-    apt-get install -y postgresql-${POSTGRES_VERSION} postgresql-client-${POSTGRES_VERSION} postgresql-contrib-${POSTGRES_VERSION} gnupg2 && \
-    sudo sh -c "echo \"jenkins ALL=(ALL) NOPASSWD: ALL\" >> /etc/sudoers" && \
-    sudo sh -c "echo \"postgres ALL=(ALL) NOPASSWD: ALL\" >> /etc/sudoers"
-
-USER postgres
-
-RUN    /etc/init.d/postgresql start &&\
-    psql --command "CREATE USER docker WITH SUPERUSER PASSWORD 'docker';" &&\
-    createdb -O docker docker
-RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/${POSTGRES_VERSION}/main/pg_hba.conf && \
-    echo "listen_addresses='*'" >> /etc/postgresql/${POSTGRES_VERSION}/main/postgresql.conf
-
-USER root
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
-RUN apt-get update \
-    && apt-get install -y postgis postgresql-${POSTGRES_VERSION}-postgis-3
-
-
-EXPOSE 5432
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    sudo ./aws/install
+#RUN sudo apt-get install -y awscli
 
 USER jenkins
