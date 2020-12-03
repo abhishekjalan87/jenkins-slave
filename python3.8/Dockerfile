@@ -52,4 +52,5 @@ RUN apt-get install -y unzip && \
     rm -f awscliv2.zip && \
     aws --version
 
+
 USER jenkins
